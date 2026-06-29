@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<meta name="theme-color" content="#e94560"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="Vyrona"/>
+<title>Vyrona — Life RPG</title>
+<link rel="manifest" href="manifest.json"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/style.css"/>
+</head>
+<body data-theme="dark-oled">
+
+<!-- AUTH -->
+<div id="auth-screen" class="auth-screen">
+  <div class="auth-bg">
+    <div class="auth-orb orb1"></div>
+    <div class="auth-orb orb2"></div>
+    <div class="auth-orb orb3"></div>
+  </div>
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="logo-icon">⚡</div>
+      <h1 class="logo-title">Vyrona</h1>
+      <p class="logo-sub">Your Life RPG — Level Up Every Day</p>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Login</button>
+      <button class="auth-tab" id="tab-signup" onclick="switchTab('signup')">Sign Up</button>
+    </div>
+    <div id="login-form" class="auth-form active">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email"/>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password"/>
+      </div>
+      <button class="btn-primary" id="login-btn" onclick="doLogin()">🚀 Login</button>
+      <button class="btn-ghost" onclick="doDemo()">⚡ Try Demo (No Login)</button>
+    </div>
+    <div id="signup-form" class="auth-form">
+      <div class="form-group">
+        <label>Your Name</label>
+        <input type="text" id="signup-name" placeholder="Sajay Geddada" autocomplete="name"/>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="signup-email" placeholder="you@example.com" autocomplete="email"/>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="signup-password" placeholder="Min 6 characters" autocomplete="new-password"/>
+      </div>
+      <button class="btn-primary" onclick="doSignup()">🎮 Create Account</button>
+      <button class="btn-ghost" onclick="doDemo()">⚡ Try Demo (No Login)</button>
+    </div>
+    <p id="auth-msg" class="auth-msg"></p>
+    <p class="auth-note">💾 Works offline — data saves locally even without Supabase</p>
+  </div>
+</div><!-- /auth-screen -->
+
+<!-- APP -->
+<div id="app" class="app hidden">
+  <nav id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">⚡ <span>Vyrona</span></div>
+      <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+    </div>
+    <div class="user-card">
+      <div class="user-avatar" id="nav-avatar">V</div>
+      <div class="user-info">
+        <div class="user-name" id="nav-name">Hero</div>
+        <div class="user-level" id="nav-level">⚡ Level 1 — Rookie</div>
+      </div>
+    </div>
+    <div class="xp-bar-wrap">
+      <div class="xp-bar-track"><div class="xp-bar-fill" id="nav-xp-bar" style="width:0%"></div></div>
+      <span class="xp-label" id="nav-xp-label">0 / 500 XP</span>
+    </div>
+    <div class="sync-badge" id="sync-status">💾 Local</div>
+    <ul class="nav-list">
+      <li class="nav-item active" data-page="dashboard" onclick="showPage('dashboard')"><span class="nav-icon">🏠</span><span>Dashboard</span></li>
+      <li class="nav-item" data-page="habits" onclick="showPage('habits')"><span class="nav-icon">✅</span><span>Habits</span></li>
+      <li class="nav-item" data-page="daily" onclick="showPage('daily')"><span class="nav-icon">📋</span><span>Daily Planner</span></li>
+      <li class="nav-item" data-page="goals" onclick="showPage('goals')"><span class="nav-icon">🎯</span><span>Goals</span></li>
+      <li class="nav-item" data-page="journal" onclick="showPage('journal')"><span class="nav-icon">📓</span><span>Journal</span></li>
+      <li class="nav-item" data-page="finance" onclick="showPage('finance')"><span class="nav-icon">💰</span><span>Finance</span></li>
+      <li class="nav-item" data-page="fitness" onclick="showPage('fitness')"><span class="nav-icon">💪</span><span>Fitness</span></li>
+      <li class="nav-item" data-page="learning" onclick="showPage('learning')"><span class="nav-icon">📚</span><span>Learning</span></li>
+      <li class="nav-item" data-page="career" onclick="showPage('career')"><span class="nav-icon">💼</span><span>Career</span></li>
+      <li class="nav-item" data-page="weekly" onclick="showPage('weekly')"><span class="nav-icon">📊</span><span>Weekly Review</span></li>
+      <li class="nav-item" data-page="achievements" onclick="showPage('achievements')"><span class="nav-icon">🏆</span><span>Achievements</span></li>
+      <li class="nav-item" data-page="settings" onclick="showPage('settings')"><span class="nav-icon">⚙️</span><span>Settings</span></li>
+    </ul>
+    <button class="btn-logout" onclick="doLogout()">🚪 Logout</button>
+  </nav>
+  <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+  <div class="main-content">
+    <header class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-right">
+        <div class="topbar-date" id="topbar-date"></div>
+        <div class="topbar-xp" id="topbar-xp">⚡ 0 XP</div>
+      </div>
+    </header>
+
+    <div class="pages-container">
+
+      <!-- DASHBOARD -->
+      <div id="page-dashboard" class="page active">
+        <div class="page-inner">
+          <div class="greeting-banner">
+            <div class="greeting-text" id="greeting-text">Welcome back!</div>
+            <div class="greeting-quote" id="quote-text"></div>
+          </div>
+          <div class="kpi-grid">
+            <div class="kpi-card"><div class="kpi-icon">🔥</div><div class="kpi-value" id="kpi-streak">0</div><div class="kpi-label">Streak</div></div>
+            <div class="kpi-card"><div class="kpi-icon">⚡</div><div class="kpi-value" id="kpi-xp">0</div><div class="kpi-label">Total XP</div></div>
+            <div class="kpi-card"><div class="kpi-icon">🏆</div><div class="kpi-value" id="kpi-level">1</div><div class="kpi-label">Level</div></div>
+            <div class="kpi-card"><div class="kpi-icon">✅</div><div class="kpi-value" id="kpi-today">0%</div><div class="kpi-label">Today</div></div>
+            <div class="kpi-card"><div class="kpi-icon">😊</div><div class="kpi-value" id="kpi-mood">—</div><div class="kpi-label">Mood</div></div>
+            <div class="kpi-card"><div class="kpi-icon">😴</div><div class="kpi-value" id="kpi-sleep">—</div><div class="kpi-label">Sleep</div></div>
+            <div class="kpi-card"><div class="kpi-icon">💧</div><div class="kpi-value" id="kpi-water">—</div><div class="kpi-label">Water</div></div>
+            <div class="kpi-card"><div class="kpi-icon">💰</div><div class="kpi-value" id="kpi-savings">₹0</div><div class="kpi-label">Saved</div></div>
+          </div>
+          <div class="section-card">
+            <div class="section-header"><h2 class="section-title">⚡ Today's Habits</h2><button class="btn-sm" onclick="showPage('habits')">All →</button></div>
+            <div id="today-habits-list"><p class="empty-msg">No habits yet. <a href="#" onclick="showPage('habits')">Add one →</a></p></div>
+          </div>
+          <div class="two-col">
+            <div class="section-card">
+              <h2 class="section-title">💊 Today's Vitals</h2>
+              <div class="vitals-grid">
+                <div class="vital-item"><span>😴</span><div><div class="vital-label">Sleep (hrs)</div><input type="number" class="vital-input" id="vital-sleep" placeholder="7.5" step="0.5" onchange="saveVitals()"/></div></div>
+                <div class="vital-item"><span>💧</span><div><div class="vital-label">Water (L)</div><input type="number" class="vital-input" id="vital-water" placeholder="2.5" step="0.25" onchange="saveVitals()"/></div></div>
+                <div class="vital-item"><span>🚶</span><div><div class="vital-label">Steps</div><input type="number" class="vital-input" id="vital-steps" placeholder="8000" step="100" onchange="saveVitals()"/></div></div>
+                <div class="vital-item"><span>⚖️</span><div><div class="vital-label">Weight (kg)</div><input type="number" class="vital-input" id="vital-weight" placeholder="70" step="0.5" onchange="saveVitals()"/></div></div>
+              </div>
+            </div>
+            <div class="section-card">
+              <h2 class="section-title">😊 Mood</h2>
+              <div class="mood-grid">
+                <button class="mood-btn" data-mood="😄" onclick="setMood('😄','Great')">😄<span>Great</span></button>
+                <button class="mood-btn" data-mood="🙂" onclick="setMood('🙂','Good')">🙂<span>Good</span></button>
+                <button class="mood-btn" data-mood="😐" onclick="setMood('😐','Okay')">😐<span>Okay</span></button>
+                <button class="mood-btn" data-mood="😔" onclick="setMood('😔','Low')">😔<span>Low</span></button>
+                <button class="mood-btn" data-mood="🤩" onclick="setMood('🤩','Epic')">🤩<span>Epic</span></button>
+              </div>
+            </div>
+          </div>
+          <div class="section-card">
+            <div class="section-header"><h2 class="section-title">🎯 Top 3 Priorities</h2><button class="btn-sm" onclick="addPriority()">+ Add</button></div>
+            <div id="priorities-list"></div>
+          </div>
+          <div class="section-card">
+            <h2 class="section-title">📅 30-Day Heatmap</h2>
+            <div id="heatmap-container"></div>
+          </div>
+          <div class="section-card">
+            <div class="section-header"><h2 class="section-title">🏆 Achievements</h2><button class="btn-sm" onclick="showPage('achievements')">All →</button></div>
+            <div id="badges-preview" class="badges-container"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HABITS -->
+      <div id="page-habits" class="page">
+        <div class="page-inner">
+          <div class="page-header-row">
+            <h1 class="page-h1">Habit Tracker</h1>
+            <div style="display:flex;gap:8px">
+              <button class="btn-ghost-sm" onclick="openHabitModal(null,'bad')">🚫 Quit Habit</button>
+              <button class="btn-primary" onclick="openHabitModal()">+ Good Habit</button>
+            </div>
+          </div>
+          <div class="filter-chips">
+            <button class="chip active" data-filter="all" onclick="filterHabits('all')">All</button>
+            <button class="chip" data-filter="good" onclick="filterHabits('good')">✅ Good</button>
+            <button class="chip" data-filter="bad" onclick="filterHabits('bad')">🚫 Quit</button>
+            <button class="chip" data-filter="Morning" onclick="filterHabits('Morning')">🌅 Morning</button>
+            <button class="chip" data-filter="Fitness" onclick="filterHabits('Fitness')">💪 Fitness</button>
+            <button class="chip" data-filter="Learning" onclick="filterHabits('Learning')">📚 Learning</button>
+            <button class="chip" data-filter="Mental" onclick="filterHabits('Mental')">🧘 Mental</button>
+            <button class="chip" data-filter="Finance" onclick="filterHabits('Finance')">💰 Finance</button>
+          </div>
+          <div id="habits-list" class="habits-list"></div>
+        </div>
+      </div>
+
+      <!-- DAILY PLANNER -->
+      <div id="page-daily" class="page">
+        <div class="page-inner">
+          <div class="page-header-row">
+            <h1 class="page-h1">Daily Planner</h1>
+            <div class="date-nav">
+              <button class="btn-icon" onclick="changeDay(-1)">‹</button>
+              <span id="planner-date-label" style="font-size:13px;color:var(--text2)"></span>
+              <button class="btn-icon" onclick="changeDay(1)">›</button>
+            </div>
+          </div>
+          <div class="section-card pomodoro-card">
+            <div class="pomodoro-header">
+              <h2 class="section-title" style="margin:0">🍅 Pomodoro</h2>
+              <div style="display:flex;gap:6px">
+                <button class="pomo-mode active" id="pmode-focus" onclick="setPomoMode(25,'Focus',this)">Focus 25m</button>
+                <button class="pomo-mode" id="pmode-short" onclick="setPomoMode(5,'Short Break',this)">Break 5m</button>
+                <button class="pomo-mode" id="pmode-long" onclick="setPomoMode(15,'Long Break',this)">Long 15m</button>
+              </div>
+            </div>
+            <div class="pomodoro-display">
+              <div class="pomo-ring">
+                <svg viewBox="0 0 120 120" class="pomo-svg">
+                  <circle cx="60" cy="60" r="52" class="pomo-track"/>
+                  <circle cx="60" cy="60" r="52" class="pomo-progress" id="pomo-circle"/>
+                </svg>
+                <div class="pomo-time" id="pomo-time">25:00</div>
+              </div>
+              <div class="pomo-controls">
+                <button class="btn-primary pomo-btn" id="pomo-btn" onclick="togglePomo()">▶ Start</button>
+                <button class="btn-sm" onclick="resetPomo()">↺ Reset</button>
+                <div class="pomo-count">🍅 × <span id="pomo-count">0</span> today</div>
+              </div>
+            </div>
+          </div>
+          <div class="planner-grid">
+            <div class="section-card">
+              <div class="section-header"><h2 class="section-title">⚡ MIT Tasks</h2><button class="btn-sm" onclick="addMIT()">+ Add</button></div>
+              <div id="mit-list" class="task-list"></div>
+            </div>
+            <div class="section-card">
+              <h2 class="section-title">🌅 Morning Routine</h2>
+              <div id="morning-routine" class="checklist"></div>
+              <button class="btn-sm mt8" onclick="addMorningItem()">+ Add</button>
+            </div>
+            <div class="section-card full-width">
+              <div class="section-header"><h2 class="section-title">⏰ Time Blocks</h2><button class="btn-sm" onclick="addTimeBlock()">+ Block</button></div>
+              <div id="time-blocks" class="time-blocks"></div>
+            </div>
+            <div class="section-card">
+              <h2 class="section-title">📓 Journal</h2>
+              <textarea class="journal-textarea" id="daily-journal" placeholder="What's on your mind..."></textarea>
+              <button class="btn-sm mt8" onclick="saveJournal()">💾 Save</button>
+            </div>
+            <div class="section-card">
+              <h2 class="section-title">🌙 Reflection</h2>
+              <div class="form-group"><label>🏆 Wins</label><textarea class="reflection-input" id="reflect-wins" placeholder="What went great?"></textarea></div>
+              <div class="form-group mt8"><label>📉 Lessons</label><textarea class="reflection-input" id="reflect-lessons" placeholder="What to improve?"></textarea></div>
+              <div class="form-group mt8"><label>🙏 Gratitude</label><textarea class="reflection-input" id="reflect-gratitude" placeholder="3 things grateful for..."></textarea></div>
+              <div class="form-group mt8"><label>📋 Tomorrow</label><textarea class="reflection-input" id="reflect-tomorrow" placeholder="Tomorrow's top 3..."></textarea></div>
+              <button class="btn-sm mt8" onclick="saveReflection()">💾 Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GOALS -->
+      <div id="page-goals" class="page">
+        <div class="page-inner">
+          <div class="page-header-row"><h1 class="page-h1">Goals 🎯</h1><button class="btn-primary" onclick="openGoalModal()">+ New Quest</button></div>
+          <div class="filter-chips">
+            <button class="chip active" data-filter="all" onclick="filterGoals('all')">All</button>
+            <button class="chip" data-filter="Active" onclick="filterGoals('Active')">🔵 Active</button>
+            <button class="chip" data-filter="Done" onclick="filterGoals('Done')">✅ Done</button>
+          </div>
+          <div id="goals-list" class="goals-list"></div>
+        </div>
+      </div>
+
+      <!-- JOURNAL -->
+      <div id="page-journal" class="page">
+        <div class="page-inner">
+          <div class="page-header-row"><h1 class="page-h1">Journal 📓</h1><button class="btn-primary" onclick="openJournalModal()">+ New Entry</button></div>
+          <div class="two-col">
+            <div class="section-card"><h2 class="section-title">📅 Mood Calendar</h2><div id="mood-calendar"></div></div>
+            <div class="section-card"><h2 class="section-title">📊 Mood Stats</h2><div id="mood-stats"></div></div>
+          </div>
+          <div id="journal-entries"></div>
+        </div>
+      </div>
+
+      <!-- FINANCE -->
+      <div id="page-finance" class="page">
+        <div class="page-inner">
+          <div class="page-header-row"><h1 class="page-h1">Finance 💰</h1><button class="btn-primary" onclick="openFinanceModal()">+ Add Entry</button></div>
+          <div class="kpi-grid">
+            <div class="kpi-card green"><div class="kpi-icon">💚</div><div class="kpi-value" id="fin-income">₹0</div><div class="kpi-label">Income</div></div>
+            <div class="kpi-card red"><div class="kpi-icon">🔴</div><div class="kpi-value" id="fin-expense">₹0</div><div class="kpi-label">Expenses</div></div>
+            <div class="kpi-card"><div class="kpi-icon">💰</div><div class="kpi-value" id="fin-savings">₹0</div><div class="kpi-label">Savings</div></div>
+            <div class="kpi-card"><div class="kpi-icon">📈</div><div class="kpi-value" id="fin-net">₹0</div><div class="kpi-label">Net Worth</div></div>
+          </div>
+          <div class="filter-chips">
+            <button class="chip active" data-filter="all" onclick="filterFinance('all')">All</button>
+            <button class="chip" data-filter="income" onclick="filterFinance('income')">💚 Income</button>
+            <button class="chip" data-filter="expense" onclick="filterFinance('expense')">🔴 Expense</button>
+          </div>
+          <div id="finance-list" class="finance-list"></div>
+        </div>
+      </div>
+
+      <!-- FITNESS -->
+      <div id="page-fitness" class="page">
+        <div class="page-inner">
+          <div class="page-header-row"><h1 class="page-h1">Fitness 💪</h1><button class="btn-primary" onclick="openFitnessModal()">+ Log Workout</button></div>
+          <div class="kpi-grid">
+            <div class="kpi-card"><div class="kpi-icon">⚖️</div><div class="kpi-value" id="fit-weight">—</div><div class="kpi-label">Weight (kg)</div></div>
+            <div class="kpi-card"><div class="kpi-icon">📏</div><div class="kpi-value" id="fit-bmi">—</div><div class="kpi-label">BMI</div></div>
+            <div class="kpi-card"><div class="kpi-icon">🔥</div><div class="kpi-value" id="fit-streak">0</div><div class="kpi-label">Workout Streak</div></div>
+            <div class="kpi-card"><div class="kpi-icon">💪</div><div class="kpi-value" id="fit-total">0</div><div class="kpi-label">Total Workouts</div></div>
+          </div>
+          <div class="two-col">
+            <div class="section-card">
+              <h2 class="section-title">📐 Body Stats</h2>
+              <div class="measurements-grid">
+                <div class="measure-item"><label>Height (cm)</label><input type="number" id="m-height" class="vital-input" placeholder="175" onchange="calcBMI()"/></div>
+                <div class="measure-item"><label>Weight (kg)</label><input type="number" id="m-weight" class="vital-input" placeholder="70" onchange="calcBMI()"/></div>
+                <div class="measure-item"><label>Body Fat %</label><input type="number" id="m-fat" class="vital-input" placeholder="18"/></div>
+                <div class="measure-item"><label>Chest (cm)</label><input type="number" id="m-chest" class="vital-input" placeholder="95"/></div>
+                <div class="measure-item"><label>Waist (cm)</label><input type="number" id="m-waist" class="vital-input" placeholder="82"/></div>
+                <div class="measure-item"><label>Arms (cm)</label><input type="number" id="m-arms" class="vital-input" placeholder="35"/></div>
+              </div>
+              <button class="btn-sm mt8" onclick="saveMeasurements()">Save</button>
+            </div>
+            <div class="section-card">
+              <h2 class="section-title">🍎 Nutrition</h2>
+              <div class="measurements-grid">
+                <div class="measure-item"><label>Calories</label><input type="number" id="n-cal" class="vital-input" placeholder="2000" onchange="saveNutrition()"/></div>
+                <div class="measure-item"><label>Protein (g)</label><input type="number" id="n-protein" class="vital-input" placeholder="120" onchange="saveNutrition()"/></div>
+                <div class="measure-item"><label>Carbs (g)</label><input type="number" id="n-carbs" class="vital-input" placeholder="200" onchange="saveNutrition()"/></div>
+                <div class="measure-item"><label>Fats (g)</label><input type="number" id="n-fats" class="vital-input" placeholder="60" onchange="saveNutrition()"/></div>
+              </div>
+            </div>
+          </div>
+          <div id="workout-list" class="finance-list"></div>
+        </div>
+      </div>
+
+      <!-- LEARNING -->
+      <div id="page-learning" class="page">
+        <div class="page-inner">
+          <div class="page-header-row"><h1 class="page-h1">Learning 📚</h1><button class="btn-primary" onclick="openLearningModal()">+ Add Course</button></div>
+          <div class="kpi-grid">
+            <div class="kpi-card"><div class="kpi-icon">📚</div><div class="kpi-value" id="learn-total">0</div><div class="kpi-label">Courses</div></div>
+            <div class="kpi-card"><div class="kpi-icon">⏱️</div><div class="kpi-value" id="learn-hours">0h</div><div class="kpi-label">Hours</div></div>
+            <div class="kpi-card"><div class="kpi-icon">🏅</div><div class="kpi-value" id="learn-certs">0</div><div class="kpi-label">Certs</div></div>
+            <div class="kpi-card"><div class="kpi-icon">✅</div><div class="kpi-value" id="learn-done">0</div><div class="kpi-label">Completed</div></div>
+          </div>
+          <div id="learning-list" class="goals-list"></div>
+        </div>
+      </div>
+
+      <!-- CAREER -->
+      <div id="page-career" class="page">
+        <div class="page-inner">
+          <div class="page-header-row"><h1 class="page-h1">Career 💼</h1><button class="btn-primary" onclick="openCareerModal()">+ Log Activity</button></div>
+          <div class="kpi-grid">
+            <div class="kpi-card"><div class="kpi-icon">📧</div><div class="kpi-value" id="car-apps">0</div><div class="kpi-label">Applications</div></div>
+            <div class="kpi-card"><div class="kpi-icon">🎤</div><div class="kpi-value" id="car-interviews">0</div><div class="kpi-label">Interviews</div></div>
+            <div class="kpi-card"><div class="kpi-icon">🤝</div><div class="kpi-value" id="car-network">0</div><div class="kpi-label">Connections</div></div>
+            <div class="kpi-card"><div class="kpi-icon">📜</div><div class="kpi-value" id="car-certs">0</div><div class="kpi-label">Certs</div></div>
+          </div>
+          <div id="career-list" class="finance-list"></div>
+        </div>
+      </div>
+
+      <!-- WEEKLY -->
+      <div id="page-weekly" class="page">
+        <div class="page-inner">
+          <div class="page-header-row"><h1 class="page-h1">Weekly Review 📊</h1><span class="week-label" id="weekly-label"></span></div>
+          <div class="kpi-grid">
+            <div class="kpi-card"><div class="kpi-icon">✅</div><div class="kpi-value" id="wk-habits">0%</div><div class="kpi-label">Habit Rate</div></div>
+            <div class="kpi-card"><div class="kpi-icon">⚡</div><div class="kpi-value" id="wk-xp">0</div><div class="kpi-label">XP Earned</div></div>
+            <div class="kpi-card"><div class="kpi-icon">😊</div><div class="kpi-value" id="wk-mood">—</div><div class="kpi-label">Avg Mood</div></div>
+            <div class="kpi-card"><div class="kpi-icon">😴</div><div class="kpi-value" id="wk-sleep">—</div><div class="kpi-label">Avg Sleep</div></div>
+          </div>
+          <div class="two-col">
+            <div class="section-card"><h2 class="section-title">🏆 Wins</h2><textarea class="journal-textarea" id="wk-wins" placeholder="What went great?"></textarea></div>
+            <div class="section-card"><h2 class="section-title">📉 Improve</h2><textarea class="journal-textarea" id="wk-improve" placeholder="What needs work?"></textarea></div>
+          </div>
+          <div class="section-card"><h2 class="section-title">📊 7-Day Grid</h2><div id="weekly-habit-grid"></div></div>
+          <button class="btn-primary mt8" onclick="saveWeeklyReview()">💾 Save Review</button>
+        </div>
+      </div>
+
+      <!-- ACHIEVEMENTS -->
+      <div id="page-achievements" class="page">
+        <div class="page-inner">
+          <div class="page-header-row"><h1 class="page-h1">Achievements 🏆</h1></div>
+          <div class="kpi-grid">
+            <div class="kpi-card"><div class="kpi-icon">🏅</div><div class="kpi-value" id="ach-earned">0</div><div class="kpi-label">Earned</div></div>
+            <div class="kpi-card"><div class="kpi-icon">🔒</div><div class="kpi-value" id="ach-locked">0</div><div class="kpi-label">Locked</div></div>
+            <div class="kpi-card"><div class="kpi-icon">⚡</div><div class="kpi-value" id="ach-xp">0</div><div class="kpi-label">Badge XP</div></div>
+            <div class="kpi-card"><div class="kpi-icon">📊</div><div class="kpi-value" id="ach-pct">0%</div><div class="kpi-label">Complete</div></div>
+          </div>
+          <div id="all-achievements" class="achievements-full-grid"></div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div id="page-settings" class="page">
+        <div class="page-inner">
+          <h1 class="page-h1">Settings ⚙️</h1>
+          <div class="section-card">
+            <h2 class="section-title">🎨 Theme</h2>
+            <div class="theme-grid" id="theme-grid"></div>
+          </div>
+          <div class="section-card">
+            <h2 class="section-title">👤 Profile</h2>
+            <div class="form-group"><label>Display Name</label><input type="text" id="settings-name" class="settings-input"/></div>
+            <button class="btn-primary mt8" onclick="saveSettings()">Save</button>
+          </div>
+          <div class="section-card">
+            <h2 class="section-title">☁️ Supabase Cloud Sync</h2>
+            <div class="supabase-status-box" id="sb-status-box">
+              <div class="sb-status-icon">💾</div>
+              <div><div class="sb-status-title" id="sb-status-title">Local Only</div><div class="sb-status-sub" id="sb-status-sub">Add keys below for cloud sync across devices.</div></div>
+            </div>
+            <div class="form-group mt8"><label>Supabase URL</label><input type="text" id="sb-url" class="settings-input" placeholder="https://xxxx.supabase.co"/></div>
+            <div class="form-group"><label>Supabase Anon Key</label><input type="text" id="sb-key" class="settings-input" placeholder="eyJhbGci..."/></div>
+            <button class="btn-primary mt8" onclick="connectSupabase()">☁️ Connect</button>
+            <button class="btn-sm mt8" onclick="manualSync()">🔄 Sync Now</button>
+            <div class="section-card mt8" style="background:var(--bg3);border-style:dashed;margin-top:14px">
+              <h3 style="font-size:13px;color:var(--accent);margin-bottom:8px">📋 Supabase SQL — run once in SQL Editor</h3>
+              <pre class="sql-block" id="sql-block">CREATE TABLE IF NOT EXISTS public.vyrona_data (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id uuid REFERENCES auth.users NOT NULL UNIQUE,
+  user_email text,
+  data jsonb DEFAULT '{}'::jsonb,
+  updated_at timestamptz DEFAULT now()
+);
+ALTER TABLE public.vyrona_data ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users own data" ON public.vyrona_data
+  FOR ALL USING (auth.uid() = user_id);
+ALTER PUBLICATION supabase_realtime ADD TABLE public.vyrona_data;</pre>
+              <button class="btn-sm mt8" onclick="copySQL()">📋 Copy SQL</button>
+            </div>
+          </div>
+          <div class="section-card">
+            <h2 class="section-title">🗄️ Data</h2>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">
+              <button class="btn-sm" onclick="exportData()">📥 Export JSON</button>
+              <label class="btn-sm" style="cursor:pointer">📤 Import<input type="file" accept=".json" style="display:none" onchange="importData(event)"/></label>
+              <button class="btn-sm danger" onclick="clearData()">🗑️ Clear All</button>
+            </div>
+          </div>
+          <button class="btn-logout" style="margin:16px 0" onclick="doLogout()">🚪 Logout</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="modal-overlay" class="modal-overlay hidden" onclick="closeModalOuter(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3 id="modal-title">Modal</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div id="modal-body" class="modal-body"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+<div id="xp-popup" class="xp-popup hidden"></div>
+
+<!-- Supabase SDK loaded LAST, before our scripts -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

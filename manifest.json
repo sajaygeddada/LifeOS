@@ -1,0 +1,21 @@
+{
+  "name": "Vyrona — Life RPG",
+  "short_name": "Vyrona",
+  "description": "Your complete Life Operating System — habits, goals, finance, fitness and more. Level up every day.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#000000",
+  "theme_color": "#e94560",
+  "categories": ["lifestyle", "productivity", "health", "finance"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Today's Habits", "url": "/?page=habits", "description": "Check off today's habits" },
+    { "name": "Daily Planner", "url": "/?page=daily", "description": "Open today's planner" },
+    { "name": "Quick Finance", "url": "/?page=finance", "description": "Log a finance entry" }
+  ],
+  "screenshots": []
+}
